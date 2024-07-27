@@ -1,0 +1,67 @@
+<?php
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $to = "shopner.nir500@gmail.com";
+    $subject = "New Registration";
+
+    $message = "নাম (বাংলায়): " . $_POST['name_bn'] . "\n";
+    $message .= "নাম (ইংরেজিতে): " . $_POST['name_en'] . "\n";
+    $message .= "মায়ের নাম: " . $_POST['mother_name'] . "\n";
+    $message .= "বাবার নাম: " . $_POST['father_name'] . "\n";
+    $message .= "জন্ম তারিখ: " . $_POST['dob'] . "\n";
+    $message .= "ই-মেইল এ্যাড্রেস: " . $_POST['email'] . "\n";
+    $message .= "মোবাইল নম্বর: " . $_POST['mobile'] . "\n";
+    $message .= "এনআইডি/ জন্মনিবন্ধন নম্বর: " . $_POST['nid'] . "\n";
+    $message .= "লিঙ্গ: " . $_POST['gender'] . "\n";
+$message .= "শিক্ষাগত যোগ্যতা: " . $_POST['education'] . "\n";
+$message .= "শিক্ষাবর্ষ: " . $_POST['year'] . "\n";
+$message .= "শিক্ষাপ্রতিষ্ঠান/ কর্মস্থলের নাম: " . $_POST['institution'] . "\n";
+$message .= "রক্তের গ্রুপ: " . $_POST['blood_group'] . "\n";
+$message .= "বর্তমান ঠিকানা: " . $_POST['current_address'] . "\n";
+$message .= "স্থায়ী ঠিকানা: " . $_POST['permanent_address'] . "\n";
+$message .= "আপনি কি ধূমপান করেন?: " . $_POST['smoking'] . "\n";
+$message .= "রাজনৈতিক ব্যক্তিত্ব: " . $_POST['political'] . "\n";
+$message .= "প্রিয় লেখক: " . $_POST['favorite_author'] . "\n";
+$message .= "আপনার জীবনের লক্ষ্য: " . $_POST['goal'] . "\n";
+$message .= "১৯৭১ সম্পর্কে যা জানেন: " . $_POST['history_1971'] . "\n";
+$message .= "হোয়াটসঅ্যাপ নম্বর (যদি থাকে): " . $_POST['whatsapp'] . "\n";
+$message .= "ফেসবুক আইডি লিংক (যদি থাকে): " . $_POST['facebook'] . "\n";
+
+$headers = "From: pabsraj2024@gmail.com";
+if (isset($_FILES['photo']) && $_FILES['photo']['error'] == UPLOAD_ERR_OK) {
+    $file_tmp_name = $_FILES['photo']['tmp_name'];
+    $file_name = $_FILES['photo']['name'];
+    $file_size = $_FILES['photo']['size'];
+    $file_type = $_FILES['photo']['type'];
+    $file_error = $_FILES['photo']['error'];
+
+    // ফাইলের তথ্য যুক্ত করা
+    $message .= "ছবি: " . $file_name . "\n";
+
+    // ফাইল সংযুক্ত করার জন্য
+    $content = chunk_split(base64_encode(file_get_contents($file_tmp_name)));
+    $uid = md5(uniqid(time()));
+
+    $filename = basename($file_name);
+
+    $headers .= "MIME-Version: 1.0\r\n";
+    $headers .= "Content-Type: multipart/mixed; boundary=\"".$uid."\"\r\n\r\n";
+    $headers .= "This is a multi-part message in MIME format.\r\n";
+    $headers .= "--".$uid."\r\n";
+    $headers .= "Content-type:text/plain; charset=UTF-8\r\n";
+    $headers .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
+    $headers .= $message."\r\n\r\n";
+    $headers .= "--".$uid."\r\n";
+    $headers .= "Content-Type: ".$file_type."; name=\"".$filename."\"\r\n";
+    $headers .= "Content-Transfer-Encoding: base64\r\n";
+    $headers .= "Content-Disposition: attachment; filename=\"".$filename."\"\r\n\r\n";
+    $headers .= $content."\r\n\r\n";
+    $headers .= "--".$uid."--";
+}
+
+if (mail($to, $subject, "", $headers)) {
+    echo "নিবন্ধন সফল হয়েছে।";
+} else {
+    echo "নিবন্ধন ব্যর্থ হয়েছে।";
+}
+}
+?>
